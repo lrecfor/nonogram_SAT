@@ -2,6 +2,8 @@ import sys
 import random
 from PyQt6.QtWidgets import QApplication
 from mainwindow import MainWindow
+from nonogram import Nonogram
+import time
 
 
 if __name__ == '__main__':
