@@ -3,7 +3,7 @@ import random
 from PyQt6.QtWidgets import QApplication
 from mainwindow import MainWindow
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
     # n = Nonogram()
     # n.logic_solve()

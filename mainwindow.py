@@ -3,7 +3,7 @@ import random
 from PyQt6.QtWidgets import *
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, \
-    QHBoxLayout, QGridLayout, QPushButton
+    QHBoxLayout, QGridLayout, QPushButton, QScrollArea
 from PyQt6.QtCore import Qt, QEvent, QPoint, QPointF, QCoreApplication
 from PyQt6.QtGui import QMouseEvent, QPointingDevice
 import os
@@ -12,7 +12,7 @@ from nonogram import Nonogram
 
 
 uploadFlag = 0
-path_ = "C:\\Users\\dana\\uni\\coursework\\nonograms"
+path_ = "./"
 nonogramName = ""
 
 
@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
     def get_nonograms_fr_dir(self):
         path = path_
         for entry in os.scandir(path):
-            if entry.is_file():
+            if entry.is_file() and entry.name.endswith('.txt'):
                 self.nonograms.append(entry.path)
 
     def nonogram_fr_file(self, filename):
@@ -145,7 +145,7 @@ class MainWindow(QMainWindow):
                     str_ += "\n"
 
             label = QLabel(str_)
-            label.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom | QtCore.Qt.AlignmentFlag.AlignVCenter)
+            label.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom | QtCore.Qt.AlignmentFlag.AlignCenter)
             self.cols.append(label)
 
             if i > 0 and i % 5 == 0:
@@ -235,6 +235,12 @@ class MainWindow(QMainWindow):
         self.buttonStatus = []
         self.puzzle = []
 
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll.setWidget(QWidget())
+
         self.window = QWidget()
         self.layout = QVBoxLayout(self.window)
         self.layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -245,6 +251,8 @@ class MainWindow(QMainWindow):
         self.grid = QGridLayout()
         self.grid.setSpacing(0)
         self.grid.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        self.scroll.widget().setLayout(self.grid)
 
         self.exitButton = QPushButton("Exit", self)
         self.checkButton = QPushButton("Check", self)
@@ -268,5 +276,6 @@ class MainWindow(QMainWindow):
 
         self.layout.addLayout(self.top)
         self.layout.addLayout(self.grid)
+        self.layout.addWidget(self.scroll)
 
         self.setMouseTracking(True)
