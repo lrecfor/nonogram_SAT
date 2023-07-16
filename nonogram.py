@@ -4,8 +4,8 @@ import copy
 import time
 
 
-filename1 = "C:\\Users\\dana\\uni\\coursework\\japan.txt"
-filename2 = "C:\\Users\\dana\\uni\\coursework\\japan_sol.txt"
+filename1 = "input.txt"
+filename2 = "output.txt"
 
 
 class Status(enum.Enum):
@@ -15,88 +15,90 @@ class Status(enum.Enum):
 
 
 class Nonogram:
-    # def __init__(self, w, h, nonogram_cols, nonogram_rows):
-    #     self.width = w
-    #     self.height = h
-    #     self.cols = nonogram_cols
-    #     self.rows = nonogram_rows
+    def __init__(self, w, h, nonogram_cols, nonogram_rows):
+        self.width = w
+        self.height = h
+        self.cols = nonogram_cols
+        self.rows = nonogram_rows
+        self.solution = []
+        self.filledRows = [False] * self.height
+        self.filledCols = [False] * self.width
+        self.solution = [[Status.white] * self.width for _ in range(self.height)]
+        self.colsValuesStatus = [[False] * len(col) for col in self.cols]
+        self.rowsValuesStatus = [[False] * len(row) for row in self.rows]
+
+    # def __init__(self, filename="C:\\Users\\dana\\uni\\coursework\\japan.txt"):
+    #     self.width = 0
+    #     self.height = 0
+    #     self.cols = []
+    #     self.rows = []
     #     self.solution = []
     #     self.filledCols = []
     #     self.filledRows = []
     #     self.colsValuesStatus = []
     #     self.rowsValuesStatus = []
-    def __init__(self, filename="C:\\Users\\dana\\uni\\coursework\\japan.txt"):
-        self.width = 0
-        self.height = 0
-        self.cols = []
-        self.rows = []
-        self.solution = []
-        self.filledCols = []
-        self.filledRows = []
-        self.colsValuesStatus = []
-        self.rowsValuesStatus = []
+    #
+    #     file = open(filename1, "r")
+    #     if file:
+    #         lines = file.readlines()
+    #         tmp = []
+    #         for line in lines:
+    #             if line == "\n":
+    #                 break
+    #             line = line.strip()
+    #             numbers = line.split()
+    #             tmp = [int(num) for num in numbers]
+    #             self.rows.append(tmp)
+    #             self.filledRows.append(False)
+    #             tmp = []
+    #
+    #         tmp = []
+    #         for line in lines[len(self.rows) + 1:]:
+    #             line = line.strip()
+    #             numbers = line.split()
+    #             tmp = [int(num) for num in numbers]
+    #             self.cols.append(tmp)
+    #             self.filledCols.append(False)
+    #             tmp = []
+    #
+    #     file.close()
+    #
+    #     self.width = len(self.cols)
+    #     self.height = len(self.rows)
+    #
+    #     ######################################
+    #     # ef fish
+    #     # self.rows = [[3, 3, 2], [1, 1, 3, 2, 2], [1, 2, 1, 3, 2, 2], [1, 1, 1, 1, 4, 2, 3, 1], [1, 3, 1, 4, 1, 3], [1, 1, 2, 6, 2, 1], [3, 1, 3, 6, 3], [4, 2, 6, 1, 1], [3, 2, 2, 1, 8, 2, 1], [1, 2, 2, 5, 9, 1, 3], [1, 3, 6, 13, 3], [5, 3, 3, 4, 4, 2, 1], [3, 2, 2, 3, 2, 3, 9], [2, 2, 1, 2, 1, 3, 5, 5], [2, 3, 4, 3, 3, 6, 1, 2], [2, 6, 2, 4, 2, 8, 2, 1], [7, 5, 2, 10], [12, 5, 5, 2, 2], [3, 8, 5, 7, 2, 1], [1, 1, 2, 3, 3, 6, 1, 3], [1, 2, 1, 5, 12, 1, 1], [1, 2, 3, 1, 10, 3, 2], [2, 1, 2, 1, 2, 5, 1, 1], [1, 1, 1, 1, 6, 4, 3, 1, 2], [3, 2, 2, 5, 4, 2, 1], [1, 1, 1, 2, 5, 2, 1, 2], [3, 1, 2, 1, 4, 1, 2, 2], [2, 1, 1, 3, 1, 1, 1], [1, 1, 2, 3, 1, 1]]
+    #     # self.cols = [[3, 3, 3], [3, 1, 2, 2, 1, 3, 1, 1], [1, 1, 1, 3, 2, 3, 3, 2], [1, 2, 1, 5, 1, 1, 2], [1, 1, 1, 1, 3, 2, 1, 5], [1, 3, 1, 3, 3, 3], [1, 1, 4, 2, 1], [3, 6, 2, 2, 1], [9, 1, 2, 1, 1], [3, 5, 2, 1, 1], [3, 2, 5, 1, 1], [3, 4, 2, 2, 2], [5, 1, 1, 2, 2, 5], [3, 1, 3, 2, 3, 2, 5], [2, 7, 4, 3, 5], [3, 4, 7, 1, 2, 6], [3, 2, 2, 6, 2, 8], [3, 1, 5, 3, 5, 3, 1], [2, 1, 3, 4, 2, 3], [1, 2, 2, 5, 2, 2, 4], [2, 7, 3, 2, 5], [2, 1, 6, 3, 3, 3, 2], [1, 3, 5, 2, 3, 4, 2], [3, 5, 1, 1, 5, 2], [1, 2, 4, 9, 1, 1], [3, 15, 2], [1, 1, 14, 2], [3, 12, 3, 2], [1, 1, 9, 3, 1, 1], [3, 1, 3, 3, 1, 1, 1], [3, 2, 4], [9, 3], [2, 2, 2, 2, 1, 3], [2, 3, 2, 1, 3, 2], [2, 1, 3, 4, 3]]
+    #     # tong
+    #     # self.rows = [[0, 0, 0, 4, 2, 13], [0, 0, 0, 0, 10, 6], [0, 0, 5, 2, 8, 4], [0, 0, 0, 3, 9, 3],
+    #     #              [0, 0, 3, 4, 5, 2], [0, 0, 2, 6, 3, 1], [0, 0, 0, 2, 8, 3], [0, 0, 5, 2, 3, 3], [0, 0, 0, 9, 2, 3],
+    #     #              [0, 0, 5, 1, 2, 2], [0, 0, 3, 1, 2, 2], [0, 0, 3, 1, 2, 2], [0, 0, 2, 1, 2, 2], [0, 0, 1, 2, 1, 2],
+    #     #              [0, 0, 2, 2, 1, 2], [0, 2, 1, 2, 2, 2], [0, 2, 1, 3, 2, 2], [2, 2, 1, 1, 2, 2], [0, 2, 2, 1, 2, 4],
+    #     #              [0, 0, 2, 2, 1, 3], [0, 0, 0, 0, 3, 16], [0, 0, 0, 3, 4, 5], [0, 0, 0, 0, 6, 13],
+    #     #              [0, 0, 0, 3, 6, 3], [0, 0, 0, 1, 2, 2], [0, 0, 0, 1, 2, 2], [0, 0, 0, 2, 2, 2], [0, 0, 2, 1, 2, 3],
+    #     #              [0, 0, 0, 0, 10, 3], [0, 0, 0, 0, 5, 3]]
+    #     # self.cols = [[0, 0, 0, 0, 0, 6], [0, 0, 0, 0, 4, 5], [0, 0, 0, 0, 4, 4], [0, 0, 0, 0, 4, 3], [0, 0, 0, 0, 3, 3],
+    #     #              [0, 0, 0, 0, 6, 2], [0, 0, 0, 0, 7, 5], [0, 0, 4, 2, 2, 3], [0, 0, 3, 1, 3, 3], [0, 0, 3, 8, 3, 2],
+    #     #              [0, 3, 3, 5, 2, 2], [0, 2, 2, 2, 3, 2], [2, 2, 1, 1, 1, 2], [0, 2, 2, 1, 1, 1], [0, 3, 2, 1, 2, 2],
+    #     #              [0, 2, 2, 1, 2, 1], [0, 2, 4, 1, 2, 2], [0, 1, 3, 2, 6, 6], [0, 1, 3, 2, 2, 8], [0, 1, 3, 2, 3, 4],
+    #     #              [0, 0, 1, 2, 2, 5], [0, 0, 1, 2, 2, 3], [0, 0, 1, 3, 2, 5], [0, 0, 1, 3, 9, 2], [0, 0, 2, 2, 6, 3],
+    #     #              [0, 0, 2, 3, 1, 4], [0, 0, 3, 4, 2, 3], [0, 0, 4, 4, 3, 3], [0, 0, 0, 5, 11, 2],
+    #     #              [0, 0, 0, 6, 7, 1]]
+    #     # self.height = 30
+    #     # self.width = 35
+    #     # self.filledRows = [False] * self.height
+    #     # self.filledCols = [False] * self.width
+    #     # bird
+    #     # self.rows = [[0, 0, 0, 6], [0, 0, 0, 8], [0, 0, 4, 2], [0, 3, 1, 4], [0, 3, 2, 1], [0, 0, 3, 2], [0, 0, 2, 1], [0, 0, 3, 1], [0, 3, 2, 2], [0, 5, 2, 2], [0, 0, 7, 3], [0, 0, 14, 2], [0, 2, 8, 2], [0, 5, 7, 3], [0, 8, 4, 3], [0, 9, 2, 4], [0, 0, 10, 4], [0, 0, 14, 6], [0, 0, 8, 7], [0, 0, 12, 11], [0, 0, 12, 3], [0, 10, 9, 5], [0, 11, 6, 8], [12, 2, 2, 9], [0, 12, 2, 10]]
+    #     # self.cols = [[0, 0, 0, 1, 4], [0, 0, 1, 1, 4], [0, 0, 0, 3, 4], [0, 0, 0, 3, 4], [0, 0, 1, 3, 4], [0, 0, 3, 3, 4], [0, 0, 3, 3, 4], [0, 0, 0, 8, 4], [0, 0, 0, 9, 4], [0, 0, 1, 7, 4], [0, 1, 4, 1, 3], [0, 1, 4, 2, 2], [0, 0, 1, 3, 2], [0, 0, 1, 3, 5], [0, 0, 4, 2, 6], [0, 6, 1, 4, 1], [0, 0, 11, 1, 4], [0, 0, 0, 14, 4], [0, 5, 1, 7, 6], [4, 1, 5, 4, 1], [3, 1, 4, 5, 1], [2, 1, 3, 4, 2], [0, 2, 1, 5, 3], [2, 2, 1, 5, 3], [2, 1, 2, 6, 3], [0, 0, 2, 10, 4], [0, 2, 2, 5, 4], [0, 0, 0, 4, 5], [0, 0, 1, 1, 5], [0, 0, 0, 1, 5]]
+    #     ######################################
+    #
+    #     self.solution = [[Status.white] * self.width for _ in range(self.height)]
+    #     self.colsValuesStatus = [[False] * len(col) for col in self.cols]
+    #     self.rowsValuesStatus = [[False] * len(row) for row in self.rows]
 
-        file = open(filename1, "r")
-        if file:
-            lines = file.readlines()
-            tmp = []
-            for line in lines:
-                if line == "\n":
-                    break
-                line = line.strip()
-                numbers = line.split()
-                tmp = [int(num) for num in numbers]
-                self.rows.append(tmp)
-                self.filledRows.append(False)
-                tmp = []
-
-            tmp = []
-            for line in lines[len(self.rows) + 1:]:
-                line = line.strip()
-                numbers = line.split()
-                tmp = [int(num) for num in numbers]
-                self.cols.append(tmp)
-                self.filledCols.append(False)
-                tmp = []
-
-        file.close()
-
-        self.width = len(self.cols)
-        self.height = len(self.rows)
-
-        ######################################
-        # ef fish
-        # self.rows = [[3, 3, 2], [1, 1, 3, 2, 2], [1, 2, 1, 3, 2, 2], [1, 1, 1, 1, 4, 2, 3, 1], [1, 3, 1, 4, 1, 3], [1, 1, 2, 6, 2, 1], [3, 1, 3, 6, 3], [4, 2, 6, 1, 1], [3, 2, 2, 1, 8, 2, 1], [1, 2, 2, 5, 9, 1, 3], [1, 3, 6, 13, 3], [5, 3, 3, 4, 4, 2, 1], [3, 2, 2, 3, 2, 3, 9], [2, 2, 1, 2, 1, 3, 5, 5], [2, 3, 4, 3, 3, 6, 1, 2], [2, 6, 2, 4, 2, 8, 2, 1], [7, 5, 2, 10], [12, 5, 5, 2, 2], [3, 8, 5, 7, 2, 1], [1, 1, 2, 3, 3, 6, 1, 3], [1, 2, 1, 5, 12, 1, 1], [1, 2, 3, 1, 10, 3, 2], [2, 1, 2, 1, 2, 5, 1, 1], [1, 1, 1, 1, 6, 4, 3, 1, 2], [3, 2, 2, 5, 4, 2, 1], [1, 1, 1, 2, 5, 2, 1, 2], [3, 1, 2, 1, 4, 1, 2, 2], [2, 1, 1, 3, 1, 1, 1], [1, 1, 2, 3, 1, 1]]
-        # self.cols = [[3, 3, 3], [3, 1, 2, 2, 1, 3, 1, 1], [1, 1, 1, 3, 2, 3, 3, 2], [1, 2, 1, 5, 1, 1, 2], [1, 1, 1, 1, 3, 2, 1, 5], [1, 3, 1, 3, 3, 3], [1, 1, 4, 2, 1], [3, 6, 2, 2, 1], [9, 1, 2, 1, 1], [3, 5, 2, 1, 1], [3, 2, 5, 1, 1], [3, 4, 2, 2, 2], [5, 1, 1, 2, 2, 5], [3, 1, 3, 2, 3, 2, 5], [2, 7, 4, 3, 5], [3, 4, 7, 1, 2, 6], [3, 2, 2, 6, 2, 8], [3, 1, 5, 3, 5, 3, 1], [2, 1, 3, 4, 2, 3], [1, 2, 2, 5, 2, 2, 4], [2, 7, 3, 2, 5], [2, 1, 6, 3, 3, 3, 2], [1, 3, 5, 2, 3, 4, 2], [3, 5, 1, 1, 5, 2], [1, 2, 4, 9, 1, 1], [3, 15, 2], [1, 1, 14, 2], [3, 12, 3, 2], [1, 1, 9, 3, 1, 1], [3, 1, 3, 3, 1, 1, 1], [3, 2, 4], [9, 3], [2, 2, 2, 2, 1, 3], [2, 3, 2, 1, 3, 2], [2, 1, 3, 4, 3]]
-        # tong
-        # self.rows = [[0, 0, 0, 4, 2, 13], [0, 0, 0, 0, 10, 6], [0, 0, 5, 2, 8, 4], [0, 0, 0, 3, 9, 3],
-        #              [0, 0, 3, 4, 5, 2], [0, 0, 2, 6, 3, 1], [0, 0, 0, 2, 8, 3], [0, 0, 5, 2, 3, 3], [0, 0, 0, 9, 2, 3],
-        #              [0, 0, 5, 1, 2, 2], [0, 0, 3, 1, 2, 2], [0, 0, 3, 1, 2, 2], [0, 0, 2, 1, 2, 2], [0, 0, 1, 2, 1, 2],
-        #              [0, 0, 2, 2, 1, 2], [0, 2, 1, 2, 2, 2], [0, 2, 1, 3, 2, 2], [2, 2, 1, 1, 2, 2], [0, 2, 2, 1, 2, 4],
-        #              [0, 0, 2, 2, 1, 3], [0, 0, 0, 0, 3, 16], [0, 0, 0, 3, 4, 5], [0, 0, 0, 0, 6, 13],
-        #              [0, 0, 0, 3, 6, 3], [0, 0, 0, 1, 2, 2], [0, 0, 0, 1, 2, 2], [0, 0, 0, 2, 2, 2], [0, 0, 2, 1, 2, 3],
-        #              [0, 0, 0, 0, 10, 3], [0, 0, 0, 0, 5, 3]]
-        # self.cols = [[0, 0, 0, 0, 0, 6], [0, 0, 0, 0, 4, 5], [0, 0, 0, 0, 4, 4], [0, 0, 0, 0, 4, 3], [0, 0, 0, 0, 3, 3],
-        #              [0, 0, 0, 0, 6, 2], [0, 0, 0, 0, 7, 5], [0, 0, 4, 2, 2, 3], [0, 0, 3, 1, 3, 3], [0, 0, 3, 8, 3, 2],
-        #              [0, 3, 3, 5, 2, 2], [0, 2, 2, 2, 3, 2], [2, 2, 1, 1, 1, 2], [0, 2, 2, 1, 1, 1], [0, 3, 2, 1, 2, 2],
-        #              [0, 2, 2, 1, 2, 1], [0, 2, 4, 1, 2, 2], [0, 1, 3, 2, 6, 6], [0, 1, 3, 2, 2, 8], [0, 1, 3, 2, 3, 4],
-        #              [0, 0, 1, 2, 2, 5], [0, 0, 1, 2, 2, 3], [0, 0, 1, 3, 2, 5], [0, 0, 1, 3, 9, 2], [0, 0, 2, 2, 6, 3],
-        #              [0, 0, 2, 3, 1, 4], [0, 0, 3, 4, 2, 3], [0, 0, 4, 4, 3, 3], [0, 0, 0, 5, 11, 2],
-        #              [0, 0, 0, 6, 7, 1]]
-        # self.height = 30
-        # self.width = 35
-        # self.filledRows = [False] * self.height
-        # self.filledCols = [False] * self.width
-        # bird
-        # self.rows = [[0, 0, 0, 6], [0, 0, 0, 8], [0, 0, 4, 2], [0, 3, 1, 4], [0, 3, 2, 1], [0, 0, 3, 2], [0, 0, 2, 1], [0, 0, 3, 1], [0, 3, 2, 2], [0, 5, 2, 2], [0, 0, 7, 3], [0, 0, 14, 2], [0, 2, 8, 2], [0, 5, 7, 3], [0, 8, 4, 3], [0, 9, 2, 4], [0, 0, 10, 4], [0, 0, 14, 6], [0, 0, 8, 7], [0, 0, 12, 11], [0, 0, 12, 3], [0, 10, 9, 5], [0, 11, 6, 8], [12, 2, 2, 9], [0, 12, 2, 10]]
-        # self.cols = [[0, 0, 0, 1, 4], [0, 0, 1, 1, 4], [0, 0, 0, 3, 4], [0, 0, 0, 3, 4], [0, 0, 1, 3, 4], [0, 0, 3, 3, 4], [0, 0, 3, 3, 4], [0, 0, 0, 8, 4], [0, 0, 0, 9, 4], [0, 0, 1, 7, 4], [0, 1, 4, 1, 3], [0, 1, 4, 2, 2], [0, 0, 1, 3, 2], [0, 0, 1, 3, 5], [0, 0, 4, 2, 6], [0, 6, 1, 4, 1], [0, 0, 11, 1, 4], [0, 0, 0, 14, 4], [0, 5, 1, 7, 6], [4, 1, 5, 4, 1], [3, 1, 4, 5, 1], [2, 1, 3, 4, 2], [0, 2, 1, 5, 3], [2, 2, 1, 5, 3], [2, 1, 2, 6, 3], [0, 0, 2, 10, 4], [0, 2, 2, 5, 4], [0, 0, 0, 4, 5], [0, 0, 1, 1, 5], [0, 0, 0, 1, 5]]
-        ######################################
-
-        self.solution = [[Status.white] * self.width for _ in range(self.height)]
-        self.colsValuesStatus = [[False] * len(col) for col in self.cols]
-        self.rowsValuesStatus = [[False] * len(row) for row in self.rows]
-
-    def printNonogram(self, nonogram):
+    def print_nonogram(self, nonogram):
         print("\t", end="")
         for j in range(self.width):
             if j > 9:
@@ -117,7 +119,7 @@ class Nonogram:
 
         print("\n\n")
 
-    def sumCol(self, nonogram, col, kind):
+    def sum_col(self, nonogram, col, kind):
         summa = 0
         for j in range(self.height):
             if nonogram[j][col] == kind:
@@ -125,7 +127,7 @@ class Nonogram:
 
         return summa
 
-    def sumRow(self, nonogram, row, kind):
+    def sum_row(self, nonogram, row, kind):
         summa = 0
         for j in range(self.width):
             if nonogram[row][j] == kind:
@@ -133,7 +135,7 @@ class Nonogram:
 
         return summa
 
-    def calcColBias(self, nonogram, col):
+    def calc_col_bias(self, nonogram, col):
         biasUp = 0  # смещение, если сверху есть отмеченные клетки
         biasDown = 0  # смещение, если снизу есть отмеченные клетки
 
@@ -159,7 +161,7 @@ class Nonogram:
 
         return biasUp, biasDown
 
-    def calcRowBias(self, nonogram, row):
+    def calc_row_bias(self, nonogram, row):
         biasLeft = 0  # смещение, если слева есть отмеченные клетки
         biasRight = 0  # смещение, если справа есть отмеченные клетки
 
@@ -207,7 +209,7 @@ class Nonogram:
                 pos = pos + z + y
             yield l
 
-    def calcSolution(self):
+    def logic_solve(self):
         affectedLines = []
 
         # первичная обработка пазла
@@ -248,7 +250,7 @@ class Nonogram:
                 copySolution = copy.deepcopy(self.solution)
                 # столбцы
                 if i < len(self.cols) and not self.filledCols[i]:
-                    biasPair = self.calcColBias(self.solution, i)
+                    biasPair = self.calc_col_bias(self.solution, i)
                     biasUp = biasPair[0]  # смещение если сверху есть отмеченные клетки
                     biasDown = biasPair[1]  # смещение если снизу есть отмеченные клетки
 
@@ -305,7 +307,7 @@ class Nonogram:
                             j += 1
 
                     # пункт 3.1: проверка линий за закрашенность и отметка пропусков
-                    if self.sumCol(self.solution, i, Status.black) != 0:
+                    if self.sum_col(self.solution, i, Status.black) != 0:
                         offset = 0  # смещение если сверху есть отмеченные клетки
                         stopFlag = False
                         for val in self.cols[i]:
@@ -400,7 +402,7 @@ class Nonogram:
                         self.filledCols[i] = True
 
                 if i < len(self.rows) and not self.filledRows[i]:
-                    biasPair = self.calcRowBias(self.solution, i)
+                    biasPair = self.calc_row_bias(self.solution, i)
                     biasLeft = biasPair[0]  # смещение если сверху есть отмеченные клетки
                     biasRight = biasPair[1]  # смещение если снизу есть отмеченные клетки
 
@@ -467,7 +469,7 @@ class Nonogram:
                             j += 1
 
                     # пункт 3.1: проверка линий за закрашеность и отметка пропусков
-                    if self.sumRow(self.solution, i, Status.black) != 0:
+                    if self.sum_row(self.solution, i, Status.black) != 0:
                         offset = 0  # смещение если сверху есть отмеченные клетки
                         stopFlag = False
                         for val in self.rows[i]:
@@ -616,5 +618,5 @@ class Nonogram:
         print("SOLVING TIME: ", time.time() - a)
 
         if solvable:
-            return instance.get_model()
+            return instance.get_model()[:(self.width * self.height)]
         return None

@@ -1,34 +1,38 @@
 from nonogram import Nonogram
-from nonogram import Status
 import time
+import sys
+import random
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtCore import Qt
+from mainwindow import MainWindow
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # row = [[0, 0, 0, 0, 0, 0, 0, 4], [0, 0, 0, 0, 0, 0, 0, 5], [0, 0, 0, 0, 0, 5, 4, 4], [0, 0, 0, 0, 0, 9, 3, 7], [0, 0, 0, 0, 0, 12, 1, 9], [0, 0, 0, 7, 3, 1, 2, 4], [0, 0, 0, 0, 4, 2, 2, 2], [0, 0, 0, 0, 2, 1, 2, 2], [0, 0, 3, 3, 2, 3, 4, 4], [0, 0, 0, 0, 6, 14, 4, 4], [0, 0, 0, 0, 6, 16, 5, 5], [0, 0, 0, 6, 2, 13, 5, 5], [0, 0, 5, 3, 11, 2, 5, 4], [0, 0, 4, 2, 16, 2, 4, 4], [0, 0, 4, 4, 15, 2, 3, 3], [0, 2, 4, 14, 3, 3, 2, 2], [0, 2, 5, 12, 2, 2, 3, 3], [0, 2, 4, 10, 2, 2, 2, 4], [2, 3, 3, 3, 3, 1, 1, 4], [2, 2, 3, 3, 11, 1, 1, 5], [0, 1, 1, 7, 9, 5, 1, 5], [0, 0, 2, 8, 4, 3, 6, 6], [0, 0, 0, 0, 5, 9, 2, 14], [0, 0, 0, 5, 10, 2, 12, 4], [0, 0, 0, 5, 12, 2, 13, 4], [0, 0, 0, 4, 12, 2, 16, 4], [3, 3, 6, 2, 1, 2, 13, 3], [3, 2, 6, 2, 2, 2, 14, 4], [2, 2, 3, 4, 1, 2, 13, 3], [0, 0, 2, 6, 4, 10, 1, 3], [0, 2, 4, 2, 4, 6, 1, 4], [0, 0, 0, 5, 2, 7, 1, 4], [0, 0, 0, 1, 3, 4, 2, 4], [0, 0, 0, 0, 3, 5, 3, 4], [0, 0, 0, 0, 0, 4, 6, 2]]
-    # col = [[0, 0, 0, 0, 0, 4], [0, 0, 0, 0, 4, 6], [0, 0, 0, 0, 8, 6], [0, 0, 0, 0, 10, 4], [0, 0, 7, 3, 3, 4], [0, 0, 5, 2, 2, 6], [2, 4, 3, 2, 3, 2], [4, 2, 9, 2, 1, 1], [0, 0, 4, 7, 6, 1], [0, 0, 5, 5, 8, 1], [0, 0, 5, 3, 9, 2], [0, 0, 0, 4, 8, 1], [0, 0, 4, 4, 9, 2], [0, 0, 3, 8, 8, 3], [0, 0, 0, 2, 17, 3], [0, 0, 2, 2, 6, 10], [0, 2, 3, 15, 3, 1], [2, 10, 1, 3, 3, 1], [0, 2, 10, 1, 2, 1], [3, 2, 9, 1, 2, 2], [0, 6, 11, 2, 3, 3], [0, 0, 4, 10, 6, 3], [0, 3, 2, 9, 5, 4], [0, 2, 3, 9, 3, 7], [0, 0, 3, 9, 2, 10], [0, 0, 2, 8, 8, 4], [0, 0, 3, 6, 10, 2], [0, 3, 3, 1, 12, 2], [4, 3, 3, 1, 8, 2], [0, 5, 6, 2, 9, 1], [0, 0, 4, 3, 13, 2], [0, 0, 0, 2, 13, 2], [0, 0, 0, 5, 12, 1], [0, 0, 0, 7, 12, 1], [0, 0, 0, 9, 11, 1], [0, 0, 0, 10, 9, 2], [0, 0, 10, 2, 6, 1], [0, 0, 0, 4, 5, 2], [0, 4, 1, 1, 4, 2], [0, 0, 8, 2, 2, 4], [0, 0, 9, 3, 3, 2], [0, 0, 8, 5, 4, 5], [0, 0, 0, 7, 5, 11], [0, 0, 0, 4, 6, 9], [0, 0, 0, 0, 5, 5]]
-    # file = open("#2162.txt", "w")
-    # for i in row:
-    #     if i != 0:
-    #         i = [str(_) for _ in i if _ != 0]
-    #     file.write(" ".join(i) + "\n")
-    # file.write("\n")
-    # for i in col:
-    #     if i != 0:
-    #         i = [str(_) for _ in i if _ != 0]
-    #     file.write(" ".join(i) + "\n")
+    # n = Nonogram()
+    # n.logic_solve()
+    # # n.print_nonogram(n.solution)
+    #
+    # # без первичной обработки, только SAT
+    # a = time.time()
+    # without_ = n.solve()
+    # print("WITHOUT: ", time.time() - a)
+    #
+    # print("\n\n")
+    #
+    # # с первичной обработкой и SAT
+    # a = time.time()
+    # with_ = n.solve(with_=True)
+    # print("WITH: ", time.time() - a)
+    #
+    # print("\n\nRESULT: ", without_ == with_)
 
-    n = Nonogram()
-    n.calcSolution()
-    n.printNonogram(n.solution)
-
-    a = time.time()
-    without_ = n.solve()
-    print("WITHOUT: ", time.time() - a)
-
-    print("\n\n")
-
-    a = time.time()
-    with_ = n.solve(with_=True)
-    print("WITH: ", time.time() - a)
-
-    print("\n\nRESULT: ", without_ == with_)
+    if __name__ == "__main__":
+        random.seed()
+        app = QApplication(sys.argv)
+        main_window = MainWindow()
+        main_window.show()
+        # Установка заголовка окна
+        main_window.setWindowTitle("Nonogram")
+        # main_window.showMaximized()
+        sys.exit(app.exec())
