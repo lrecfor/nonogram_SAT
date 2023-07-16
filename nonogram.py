@@ -618,5 +618,6 @@ class Nonogram:
         print("SOLVING TIME: ", time.time() - a)
 
         if solvable:
+            print(instance.get_model())
             return instance.get_model()[:(self.width * self.height)]
         return None

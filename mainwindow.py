@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         for button in self.puzzle:
             if button.status == Status.black:
                 buttonStatus.append(1)
-            elif button.status == Status.white:
+            elif button.status == Status.white or button.status == Status.cross:
                 buttonStatus.append(0)
 
         solution = self.get_solution()  # получаем правильное решение кроссворда
