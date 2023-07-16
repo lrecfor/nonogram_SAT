@@ -17,10 +17,11 @@ nonogramName = ""
 
 
 class MainWindow(QMainWindow):
-    def exit(self):
+    @staticmethod
+    def exit():
         sys.exit()
 
-    def checkNonogram(self):
+    def check_nonogram(self):
         # Функция проверки решения
         if self.grid.count() == 0:
             return
@@ -32,14 +33,14 @@ class MainWindow(QMainWindow):
             elif button.status == Status.white:
                 buttonStatus.append(0)
 
-        solution = self.getSolution()  # получаем правильное решение кроссворда
+        solution = self.get_solution()  # получаем правильное решение кроссворда
 
         if buttonStatus == solution:
             text = "Solution is OK."
         else:
             text = "There are errors in your solution."
 
-        print("checkNonogram():", text)
+        print("check_nonogram():", text)
         msgBox = QMessageBox()
         horizontalSpacer = QSpacerItem(200, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         msgBox.setText(text)
@@ -48,7 +49,7 @@ class MainWindow(QMainWindow):
         layout.addItem(horizontalSpacer, layout.rowCount(), 0, 1, layout.columnCount())
         msgBox.exec()
 
-    def getSolution(self):
+    def get_solution(self):
         n = Nonogram(self.width, self.height, self.nonogram_cols, self.nonogram_rows)
         result_ = n.solve()
         result = []
@@ -59,7 +60,7 @@ class MainWindow(QMainWindow):
                 result.append(1)
         return result
 
-    def clearNonogram(self):
+    def clear_nonogram(self):
         # Функция очистки решения
         if self.grid.count():
             for button in self.puzzle:
@@ -67,7 +68,7 @@ class MainWindow(QMainWindow):
                 button.setText("")
                 button.setStyleSheet("QPushButton { background-color: white }")
 
-    def uploadNonogram(self):
+    def upload_nonogram(self):
         # Функция загрузки решения из файла
         global uploadFlag
         global nonogramName
@@ -76,19 +77,19 @@ class MainWindow(QMainWindow):
         if usersFilename == "":
             return
         nonogramName = usersFilename
-        print("uploadNonogram():", nonogramName)
-        self.clearField()
-        self.buildNonogram()
+        print("upload_nonogram():", nonogramName)
+        self.clear_field()
+        self.build_nonogram()
 
-    def randomNonogram(self):
+    def random_nonogram(self):
         # Функция генерации случайного решения
         global nonogramName
-        self.clearField()
-        self.getNonogramsFrDir()
+        self.clear_field()
+        self.get_nonograms_fr_dir()
         nonogram = random.choice(self.nonograms)
         nonogramName = nonogram
-        print("randomNonogram():", nonogram)
-        self.buildNonogram()
+        print("random_nonogram():", nonogram)
+        self.build_nonogram()
 
     def mouseMoveEvent(self, event):
         # Обработчик события движения мыши
@@ -102,13 +103,13 @@ class MainWindow(QMainWindow):
                 QCoreApplication.sendEvent(button, clickEvent)
                 break
 
-    def getNonogramsFrDir(self):
+    def get_nonograms_fr_dir(self):
         path = path_
         for entry in os.scandir(path):
             if entry.is_file():
                 self.nonograms.append(entry.path)
 
-    def nonogramFrFile(self, filename):
+    def nonogram_fr_file(self, filename):
         with open(filename, 'r') as file:
             self.nonogram_rows = []
             self.nonogram_cols = []
@@ -131,7 +132,7 @@ class MainWindow(QMainWindow):
         self.width = len(self.nonogram_cols)
         self.height = len(self.nonogram_rows)
 
-    def fillColsLabels(self):
+    def fill_cols_labels(self):
         spacer_x = 0
         for i in range(self.width):
             str_ = ""
@@ -153,7 +154,7 @@ class MainWindow(QMainWindow):
 
             self.grid.addWidget(label, 0, i + spacer_x + 1)
 
-    def fillRowsLabels(self):
+    def fill_rows_labels(self):
         spacer_y = 0
         for i in range(self.height):
             str_ = " "
@@ -177,15 +178,15 @@ class MainWindow(QMainWindow):
 
             self.grid.addWidget(label, i + spacer_y + 1, 0)
 
-    def buildNonogram(self):
+    def build_nonogram(self):
         global uploadFlag
         if uploadFlag == 1:
             uploadFlag = 0
 
-        self.nonogramFrFile(nonogramName)
+        self.nonogram_fr_file(nonogramName)
 
-        self.fillColsLabels()
-        self.fillRowsLabels()
+        self.fill_cols_labels()
+        self.fill_rows_labels()
 
         spacer_y = 0
         spacer_x = 0
@@ -204,7 +205,7 @@ class MainWindow(QMainWindow):
 
         self.buttonStatus = [None] * len(self.puzzle)
 
-    def clearField(self):
+    def clear_field(self):
         while self.grid.count():
             widget = self.grid.itemAt(0).widget()
             if widget:
@@ -221,6 +222,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self, parent=None)
 
+        super().__init__()
         self.cols = []
         self.rows = []
         self.nonograms = []
@@ -251,10 +253,10 @@ class MainWindow(QMainWindow):
         self.randomButton = QPushButton("Random", self)
 
         self.exitButton.clicked.connect(self.exit)
-        self.checkButton.clicked.connect(self.checkNonogram)
-        self.clearButton.clicked.connect(self.clearNonogram)
-        self.uploadButton.clicked.connect(self.uploadNonogram)
-        self.randomButton.clicked.connect(self.randomNonogram)
+        self.checkButton.clicked.connect(self.check_nonogram)
+        self.clearButton.clicked.connect(self.clear_nonogram)
+        self.uploadButton.clicked.connect(self.upload_nonogram)
+        self.randomButton.clicked.connect(self.random_nonogram)
 
         self.setCentralWidget(self.window)
 

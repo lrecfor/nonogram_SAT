@@ -1,10 +1,6 @@
-from nonogram import Nonogram
-import time
 import sys
 import random
 from PyQt6.QtWidgets import QApplication
-from PyQt6.QtWidgets import QMainWindow
-from PyQt6.QtCore import Qt
 from mainwindow import MainWindow
 
 # Press the green button in the gutter to run the script.
@@ -27,12 +23,10 @@ if __name__ == '__main__':
     #
     # print("\n\nRESULT: ", without_ == with_)
 
-    if __name__ == "__main__":
-        random.seed()
-        app = QApplication(sys.argv)
-        main_window = MainWindow()
-        main_window.show()
-        # Установка заголовка окна
-        main_window.setWindowTitle("Nonogram")
-        # main_window.showMaximized()
-        sys.exit(app.exec())
+    random.seed()
+    app = QApplication(sys.argv)
+    main_window = MainWindow()
+    main_window.show()
+    main_window.setWindowTitle("Nonogram")
+    main_window.showMaximized()
+    sys.exit(app.exec())

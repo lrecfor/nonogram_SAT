@@ -569,7 +569,7 @@ class Nonogram:
             if len(affectedLines) == 0:
                 break
 
-    def solve(self, with_=False):
+    def solve(self, with_=True):
         # финальная обработка пазла с помощью SAT-решателя
         a = time.time()
         instance = Minisat22()
